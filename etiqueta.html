@@ -6,12 +6,12 @@
 <style>
   /* Estilos para la impresión A6 en APISADO (LANDSCAPE) */
   @page {
-    size: A6 landscape; /* ¡CORRECCIÓN AQUÍ! Configura el tamaño a A6 y orientación APISADA */
+    size: A6 landscape; /* Configura el tamaño a A6 y orientación APISADA */
     margin: 0; /* Elimina los márgenes por defecto de la página */
   }
 
   body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Trebuchet MS', 'Arial', sans-serif; /* ¡FUENTE CAMBIADA! Trebuchet MS, con Arial como respaldo */
     margin: 0;
     padding: 0;
     display: flex;
@@ -42,8 +42,9 @@
     padding-bottom: 2mm; /* Espacio antes de la línea */
   }
 
+  /* ¡BORDE ELIMINADO de section-box! */
   .section-box {
-    border: 0px solid black; /* Borde para cada sección (código de barras, tabla de datos) */
+    /* border: 1px solid black; */ /* ESTA LÍNEA FUE ELIMINADA/COMENTADA */
     width: calc(100% - 2mm); /* Ocupa casi todo el ancho con un pequeño margen interno */
     margin-bottom: 5mm; /* Espacio entre secciones */
     padding: 3mm; /* Padding dentro de cada caja */
@@ -52,17 +53,15 @@
   }
 
   #barcode-container {
-    width: 100%; /* El SVG ocupará el 100% del ancho de su contenedor */
+    width: 100%;
     display: flex;
-    justify-content: center; /* Centra el SVG del código de barras */
-    margin-bottom: 2mm; /* Espacio entre el SVG y el texto del SKU */
+    justify-content: center;
+    margin-bottom: 2mm;
   }
 
   #barcode {
-    /* Ajusta el ancho del código de barras para que quepa bien en los 148mm de ancho de A6 landscape */
-    /* 120mm es un buen punto de partida para que sea prominente */
     width: 120mm;
-    height: 30mm; /* Altura del SVG para el código de barras */
+    height: 30mm;
   }
 
   .barcode-text {
@@ -80,7 +79,7 @@
   }
 
   .data-table th, .data-table td {
-    border: 1px solid black;
+    border: 1px solid black; /* Mantiene los bordes de las celdas de la tabla */
     padding: 4mm 2mm;
     text-align: center;
   }
@@ -100,8 +99,9 @@
       box-shadow: none;
       border: 1px solid black;
     }
+    /* ¡BORDE ELIMINADO de section-box en impresión también! */
     .section-box {
-      border: 1px solid black;
+      border: none; /* Asegura que no haya borde en la impresión */
     }
   }
 </style>
@@ -109,9 +109,7 @@
 <body>
 
 <div class="contenedor-etiqueta">
-  <div class="logo-empresa" id="empresa-nombre">E-CARGO TOLEDO M</div>
-
-  <div class="section-box">
+  <div class="logo-empresa" id="empresa-nombre">E-CARGO TOLEDO</div> <div class="section-box">
     <div id="barcode-container">
       <svg id="barcode"></svg>
     </div>
@@ -136,7 +134,7 @@
       </tbody>
     </table>
   </div>
-    </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -147,7 +145,7 @@
     const pcs = urlParams.get('pcs') || 'N/A';
     const skid = urlParams.get('skid') || 'N/A';
     const referencia = urlParams.get('ref') || 'N/A';
-    const empresa = urlParams.get('empresa') || 'E-CARGO TOLEDO M';
+    const empresa = urlParams.get('empresa') || 'E-CARGO TOLEDO'; 
 
     document.getElementById('empresa-nombre').innerText = empresa;
     document.getElementById('barcode-value-text').innerText = sku;
@@ -159,8 +157,8 @@
       JsBarcode("#barcode", sku, {
         format: "CODE128",
         displayValue: false,
-        height: 80, // Altura del código de barras
-        width: 1.5, // Grosor de las barras
+        height: 80,
+        width: 1.5,
         margin: 0,
       });
     } else {
