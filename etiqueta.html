@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Etiqueta de Envío Instantánea</title>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<style>
+  /* Estilos para la impresión A6 en vertical */
+  @page {
+    size: A6 portrait; /* Configura el tamaño a A6 y orientación vertical */
+    margin: 0; /* Elimina los márgenes por defecto de la página */
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinea los elementos al principio del eje Y */
+    min-height: 100vh; /* Asegura que ocupe al menos la altura de la vista */
+    overflow: hidden; /* Evita barras de desplazamiento si el contenido se ajusta */
+  }
+
+  .contenedor-etiqueta {
+    width: 105mm; /* Ancho A6 en portrait */
+    height: 148mm; /* Alto A6 en portrait */
+    box-sizing: border-box; /* Incluye padding y border en el ancho/alto */
+    padding: 5mm 10mm; /* Padding interno para dejar un espacio del borde */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra horizontalmente los elementos hijos */
+    text-align: center; /* Centra el texto dentro de los divs */
+    justify-content: flex-start; /* Alinea el contenido al inicio del contenedor */
+    /* Puedes añadir un borde para visualización durante el desarrollo, quítalo en producción */
+    /* border: 1px solid #ccc; */
+  }
+
+  .logo-empresa {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5mm;
+    text-align: center;
+    width: 100%; /* Asegura que el texto "E-CARGO TOLEDO M" ocupe todo el ancho */
+  }
+
+  #barcode-container {
+    width: 100%;
+    margin-bottom: 5mm;
+    display: flex;
+    justify-content: center; /* Centra el SVG del código de barras */
+  }
+
+  #barcode {
+    width: 90mm; /* Ajusta el ancho del código de barras para que quepa bien en A6 */
+    height: 60mm; /* Ajusta la altura del código de barras */
+    /* JsBarcode ajustará las barras dentro de este SVG */
+  }
+
+  .barcode-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 2mm; /* Espacio entre el código de barras y su texto */
+    margin-bottom: 5mm;
+  }
+
+  .data-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los ítems a la izquierda dentro de esta sección */
+    margin-top: 5mm;
+  }
+
+  .data-row {
+    display: flex;
+    justify-content: space-between; /* Espacia las etiquetas y valores */
+    width: 100%;
+    margin-bottom: 2mm;
+    font-size: 1em;
+  }
+
+  .data-label {
+    font-weight: bold;
+    text-align: left; /* Alinea las etiquetas a la izquierda */
+    flex-basis: 30%; /* Ajusta el ancho de la columna de etiquetas */
+  }
+
+  .data-value {
+    text-align: right; /* Alinea los valores a la derecha */
+    flex-basis: 65%; /* Ajusta el ancho de la columna de valores */
+  }
+
+  /* Oculta todo lo que no sea la etiqueta cuando se imprime */
+  @media print {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .contenedor-etiqueta {
+      box-shadow: none; /* Quita cualquier sombra si la hubieras puesto */
+      border: none; /* Quita el borde de desarrollo */
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="contenedor-etiqueta">
+  <div class="logo-empresa" id="empresa-nombre">E-CARGO TOLEDO M</div>
+
+  <div id="barcode-container">
+    <svg id="barcode"></svg>
+  </div>
+  <div class="barcode-text" id="barcode-value-text"></div>
+
+  <div class="data-section">
+    <div class="data-row">
+      <span class="data-label">REF:</span> <span class="data-value" id="referencia-value"></span>
+    </div>
+    <div class="data-row">
+      <span class="data-label">PCS:</span> <span class="data-value" id="pcs-value"></span>
+    </div>
+    <div class="data-row">
+      <span class="data-label">DESTINO:</span> <span class="data-value" id="destino-value"></span>
+    </div>
+    <div class="data-row">
+      <span class="data-label">SKID:</span> <span class="data-value" id="skid-value"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Obtener los valores de los parámetros URL, usando un valor por defecto si no están presentes
+    const sku = urlParams.get('sku') || 'N/A';
+    const destino = urlParams.get('destino') || 'N/A';
+    const pcs = urlParams.get('pcs') || 'N/A';
+    const skid = urlParams.get('skid') || 'N/A';
+    const referencia = urlParams.get('ref') || 'N/A'; // Usamos 'ref' para referencia
+    const empresa = urlParams.get('empresa') || 'E-CARGO TOLEDO M'; // Nuevo parámetro para el nombre de la empresa
+
+    // Actualizar el contenido HTML
+    document.getElementById('empresa-nombre').innerText = empresa;
+    document.getElementById('barcode-value-text').innerText = sku;
+    document.getElementById('referencia-value').innerText = referencia;
+    document.getElementById('pcs-value').innerText = pcs;
+    document.getElementById('destino-value').innerText = destino;
+    document.getElementById('skid-value').innerText = skid;
+
+    // Generar el código de barras con JsBarcode
+    if (sku && sku !== 'N/A') {
+      JsBarcode("#barcode", sku, {
+        format: "CODE128", // Asumiendo Code128, que es común y soporta este tipo de datos
+        displayValue: false, // El texto del SKU ya lo ponemos por separado abajo
+        height: 100, // Altura del código de barras
+        width: 2, // Grosor de las barras (valor por defecto 2)
+        margin: 0, // Sin margen adicional alrededor del código
+        // textMargin: 0, // Si displayValue fuera true
+        // fontSize: 18, // Si displayValue fuera true
+      });
+    } else {
+        // Ocultar el contenedor del código de barras si no hay SKU
+        document.getElementById('barcode-container').style.display = 'none';
+        document.getElementById('barcode-value-text').style.display = 'none';
+    }
+
+
+    // Disparar la impresión después de un pequeño retraso para asegurar que todo se renderice
+    setTimeout(() => {
+      window.print();
+    }, 500); // 500ms de retraso
+  });
+</script>
+</body>
+</html>
