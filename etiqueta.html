@@ -4,9 +4,9 @@
 <title>Etiqueta de Envío Instantánea</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
-  /* Estilos para la impresión A6 en vertical */
+  /* Estilos para la impresión A6 en APISADO (LANDSCAPE) */
   @page {
-    size: A6 portrait; /* Configura el tamaño a A6 y orientación vertical */
+    size: A6 landscape; /* ¡CORRECCIÓN AQUÍ! Configura el tamaño a A6 y orientación APISADA */
     margin: 0; /* Elimina los márgenes por defecto de la página */
   }
 
@@ -22,15 +22,15 @@
   }
 
   .contenedor-etiqueta {
-    width: 105mm; /* Ancho A6 en portrait */
-    height: 148mm; /* Alto A6 en portrait */
+    /* MANTIENE TUS DIMENSIONES SOLICITADAS para A6 LANDSCAPE */
+    width: 148mm; /* Ancho A6 en landscape */
+    height: 105mm; /* Alto A6 en landscape */
     box-sizing: border-box; /* Incluye padding y border en el ancho/alto */
     padding: 5mm; /* Reduce el padding general para dar espacio a los bordes internos */
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Sigue siendo una columna, los elementos se apilan verticalmente */
     align-items: center; /* Centra horizontalmente los elementos hijos */
-    /* Añadimos el borde principal que encierra todo */
-    border: 1px solid black;
+    border: 1px solid black; /* Añadimos el borde principal que encierra todo */
   }
 
   .logo-empresa {
@@ -39,13 +39,12 @@
     margin-bottom: 5mm;
     text-align: center;
     width: 100%;
-    /* border-bottom: 1px solid black;  Si quieres una línea debajo del nombre de la empresa */
     padding-bottom: 2mm; /* Espacio antes de la línea */
   }
 
   .section-box {
     border: 1px solid black; /* Borde para cada sección (código de barras, tabla de datos) */
-    width: calc(100% - 2mm); /* Ocupa casi todo el ancho con un pequeño margen */
+    width: calc(100% - 2mm); /* Ocupa casi todo el ancho con un pequeño margen interno */
     margin-bottom: 5mm; /* Espacio entre secciones */
     padding: 3mm; /* Padding dentro de cada caja */
     box-sizing: border-box;
@@ -60,33 +59,34 @@
   }
 
   #barcode {
-    width: 90mm; /* Ancho del SVG para el código de barras */
+    /* Ajusta el ancho del código de barras para que quepa bien en los 148mm de ancho de A6 landscape */
+    /* 120mm es un buen punto de partida para que sea prominente */
+    width: 120mm;
     height: 30mm; /* Altura del SVG para el código de barras */
-    /* JsBarcode ajustará las barras dentro de este SVG */
   }
 
   .barcode-text {
-    font-size: 1.1em; /* Ajustado un poco más pequeño para dejar espacio */
+    font-size: 1.1em;
     font-weight: bold;
-    word-break: break-all; /* Para que el texto largo se rompa si es necesario */
-    padding-bottom: 2mm; /* Espacio antes de que termine la caja */
+    word-break: break-all;
+    padding-bottom: 2mm;
   }
 
   /* Estilos para la tabla de datos */
   .data-table {
     width: 100%;
-    border-collapse: collapse; /* Para que los bordes de las celdas se unan */
-    font-size: 0.9em; /* Tamaño de fuente para la tabla */
+    border-collapse: collapse;
+    font-size: 0.9em;
   }
 
   .data-table th, .data-table td {
-    border: 1px solid black; /* Bordes de las celdas */
-    padding: 4mm 2mm; /* Padding dentro de las celdas */
-    text-align: center; /* Centra el texto en las celdas */
+    border: 1px solid black;
+    padding: 4mm 2mm;
+    text-align: center;
   }
 
   .data-table th {
-    background-color: #f0f0f0; /* Un fondo ligero para los encabezados */
+    background-color: #f0f0f0;
     font-weight: bold;
   }
 
@@ -98,10 +98,10 @@
     }
     .contenedor-etiqueta {
       box-shadow: none;
-      border: 1px solid black; /* Asegura el borde en impresión */
+      border: 1px solid black;
     }
     .section-box {
-      border: 1px solid black; /* Asegura los bordes de las cajas en impresión */
+      border: 1px solid black;
     }
   }
 </style>
@@ -142,40 +142,34 @@
   document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
 
-    // Obtener los valores de los parámetros URL, usando un valor por defecto si no están presentes
     const sku = urlParams.get('sku') || 'N/A';
     const destino = urlParams.get('destino') || 'N/A';
     const pcs = urlParams.get('pcs') || 'N/A';
     const skid = urlParams.get('skid') || 'N/A';
-    const referencia = urlParams.get('ref') || 'N/A'; // Usamos 'ref' para referencia
-    const empresa = urlParams.get('empresa') || 'E-CARGO TOLEDO M'; // Nuevo parámetro para el nombre de la empresa
+    const referencia = urlParams.get('ref') || 'N/A';
+    const empresa = urlParams.get('empresa') || 'E-CARGO TOLEDO M';
 
-    // Actualizar el contenido HTML
     document.getElementById('empresa-nombre').innerText = empresa;
     document.getElementById('barcode-value-text').innerText = sku;
-    // document.getElementById('referencia-value').innerText = referencia; // Descomenta si usas la sección de referencia
     document.getElementById('pcs-value').innerText = pcs;
     document.getElementById('destino-value').innerText = destino;
     document.getElementById('skid-value').innerText = skid;
 
-    // Generar el código de barras con JsBarcode
     if (sku && sku !== 'N/A') {
       JsBarcode("#barcode", sku, {
-        format: "CODE128", // Asumiendo Code128, que es común y soporta este tipo de datos
-        displayValue: false, // El texto del SKU ya lo ponemos por separado abajo
+        format: "CODE128",
+        displayValue: false,
         height: 80, // Altura del código de barras
-        width: 1.5, // Grosor de las barras (ajustado para que quepa mejor en el ancho)
-        margin: 0, // Sin margen adicional alrededor del código
+        width: 1.5, // Grosor de las barras
+        margin: 0,
       });
     } else {
-        // Ocultar el contenedor del código de barras si no hay SKU
-        document.getElementById('barcode-container').parentNode.style.display = 'none'; // Oculta toda la 'section-box'
+        document.getElementById('barcode-container').parentNode.style.display = 'none';
     }
 
-    // Disparar la impresión después de un pequeño retraso para asegurar que todo se renderice
     setTimeout(() => {
       window.print();
-    }, 500); // 500ms de retraso
+    }, 500);
   });
 </script>
 </body>
