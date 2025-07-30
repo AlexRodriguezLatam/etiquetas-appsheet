@@ -25,14 +25,12 @@
     width: 105mm; /* Ancho A6 en portrait */
     height: 148mm; /* Alto A6 en portrait */
     box-sizing: border-box; /* Incluye padding y border en el ancho/alto */
-    padding: 5mm 10mm; /* Padding interno para dejar un espacio del borde */
+    padding: 5mm; /* Reduce el padding general para dar espacio a los bordes internos */
     display: flex;
     flex-direction: column;
     align-items: center; /* Centra horizontalmente los elementos hijos */
-    text-align: center; /* Centra el texto dentro de los divs */
-    justify-content: flex-start; /* Alinea el contenido al inicio del contenedor */
-    /* Puedes añadir un borde para visualización durante el desarrollo, quítalo en producción */
-    /* border: 1px solid #ccc; */
+    /* Añadimos el borde principal que encierra todo */
+    border: 1px solid black;
   }
 
   .logo-empresa {
@@ -40,54 +38,56 @@
     font-weight: bold;
     margin-bottom: 5mm;
     text-align: center;
-    width: 100%; /* Asegura que el texto "E-CARGO TOLEDO M" ocupe todo el ancho */
+    width: 100%;
+    /* border-bottom: 1px solid black;  Si quieres una línea debajo del nombre de la empresa */
+    padding-bottom: 2mm; /* Espacio antes de la línea */
+  }
+
+  .section-box {
+    border: 1px solid black; /* Borde para cada sección (código de barras, tabla de datos) */
+    width: calc(100% - 2mm); /* Ocupa casi todo el ancho con un pequeño margen */
+    margin-bottom: 5mm; /* Espacio entre secciones */
+    padding: 3mm; /* Padding dentro de cada caja */
+    box-sizing: border-box;
+    text-align: center; /* Centrar contenido dentro de la caja */
   }
 
   #barcode-container {
-    width: 100%;
-    margin-bottom: 5mm;
+    width: 100%; /* El SVG ocupará el 100% del ancho de su contenedor */
     display: flex;
     justify-content: center; /* Centra el SVG del código de barras */
+    margin-bottom: 2mm; /* Espacio entre el SVG y el texto del SKU */
   }
 
   #barcode {
-    width: 90mm; /* Ajusta el ancho del código de barras para que quepa bien en A6 */
-    height: 60mm; /* Ajusta la altura del código de barras */
+    width: 90mm; /* Ancho del SVG para el código de barras */
+    height: 30mm; /* Altura del SVG para el código de barras */
     /* JsBarcode ajustará las barras dentro de este SVG */
   }
 
   .barcode-text {
-    font-size: 1.2em;
+    font-size: 1.1em; /* Ajustado un poco más pequeño para dejar espacio */
     font-weight: bold;
-    margin-top: 2mm; /* Espacio entre el código de barras y su texto */
-    margin-bottom: 5mm;
+    word-break: break-all; /* Para que el texto largo se rompa si es necesario */
+    padding-bottom: 2mm; /* Espacio antes de que termine la caja */
   }
 
-  .data-section {
+  /* Estilos para la tabla de datos */
+  .data-table {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Alinea los ítems a la izquierda dentro de esta sección */
-    margin-top: 5mm;
+    border-collapse: collapse; /* Para que los bordes de las celdas se unan */
+    font-size: 0.9em; /* Tamaño de fuente para la tabla */
   }
 
-  .data-row {
-    display: flex;
-    justify-content: space-between; /* Espacia las etiquetas y valores */
-    width: 100%;
-    margin-bottom: 2mm;
-    font-size: 1em;
+  .data-table th, .data-table td {
+    border: 1px solid black; /* Bordes de las celdas */
+    padding: 4mm 2mm; /* Padding dentro de las celdas */
+    text-align: center; /* Centra el texto en las celdas */
   }
 
-  .data-label {
+  .data-table th {
+    background-color: #f0f0f0; /* Un fondo ligero para los encabezados */
     font-weight: bold;
-    text-align: left; /* Alinea las etiquetas a la izquierda */
-    flex-basis: 30%; /* Ajusta el ancho de la columna de etiquetas */
-  }
-
-  .data-value {
-    text-align: right; /* Alinea los valores a la derecha */
-    flex-basis: 65%; /* Ajusta el ancho de la columna de valores */
   }
 
   /* Oculta todo lo que no sea la etiqueta cuando se imprime */
@@ -97,8 +97,11 @@
       padding: 0;
     }
     .contenedor-etiqueta {
-      box-shadow: none; /* Quita cualquier sombra si la hubieras puesto */
-      border: none; /* Quita el borde de desarrollo */
+      box-shadow: none;
+      border: 1px solid black; /* Asegura el borde en impresión */
+    }
+    .section-box {
+      border: 1px solid black; /* Asegura los bordes de las cajas en impresión */
     }
   }
 </style>
@@ -108,26 +111,32 @@
 <div class="contenedor-etiqueta">
   <div class="logo-empresa" id="empresa-nombre">E-CARGO TOLEDO M</div>
 
-  <div id="barcode-container">
-    <svg id="barcode"></svg>
+  <div class="section-box">
+    <div id="barcode-container">
+      <svg id="barcode"></svg>
+    </div>
+    <div class="barcode-text" id="barcode-value-text"></div>
   </div>
-  <div class="barcode-text" id="barcode-value-text"></div>
 
-  <div class="data-section">
-    <div class="data-row">
-      <span class="data-label">REF:</span> <span class="data-value" id="referencia-value"></span>
-    </div>
-    <div class="data-row">
-      <span class="data-label">PCS:</span> <span class="data-value" id="pcs-value"></span>
-    </div>
-    <div class="data-row">
-      <span class="data-label">DESTINO:</span> <span class="data-value" id="destino-value"></span>
-    </div>
-    <div class="data-row">
-      <span class="data-label">SKID:</span> <span class="data-value" id="skid-value"></span>
-    </div>
+  <div class="section-box">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>PCS</th>
+          <th>DESTINO</th>
+          <th>SKID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="pcs-value"></td>
+          <td id="destino-value"></td>
+          <td id="skid-value"></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div>
+    </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -144,7 +153,7 @@
     // Actualizar el contenido HTML
     document.getElementById('empresa-nombre').innerText = empresa;
     document.getElementById('barcode-value-text').innerText = sku;
-    document.getElementById('referencia-value').innerText = referencia;
+    // document.getElementById('referencia-value').innerText = referencia; // Descomenta si usas la sección de referencia
     document.getElementById('pcs-value').innerText = pcs;
     document.getElementById('destino-value').innerText = destino;
     document.getElementById('skid-value').innerText = skid;
@@ -154,18 +163,14 @@
       JsBarcode("#barcode", sku, {
         format: "CODE128", // Asumiendo Code128, que es común y soporta este tipo de datos
         displayValue: false, // El texto del SKU ya lo ponemos por separado abajo
-        height: 100, // Altura del código de barras
-        width: 2, // Grosor de las barras (valor por defecto 2)
+        height: 80, // Altura del código de barras
+        width: 1.5, // Grosor de las barras (ajustado para que quepa mejor en el ancho)
         margin: 0, // Sin margen adicional alrededor del código
-        // textMargin: 0, // Si displayValue fuera true
-        // fontSize: 18, // Si displayValue fuera true
       });
     } else {
         // Ocultar el contenedor del código de barras si no hay SKU
-        document.getElementById('barcode-container').style.display = 'none';
-        document.getElementById('barcode-value-text').style.display = 'none';
+        document.getElementById('barcode-container').parentNode.style.display = 'none'; // Oculta toda la 'section-box'
     }
-
 
     // Disparar la impresión después de un pequeño retraso para asegurar que todo se renderice
     setTimeout(() => {
