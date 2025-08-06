@@ -4,33 +4,33 @@
 <title>Etiqueta de Envío Instantánea</title>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
-  /* Estilos para la impresión A6 en APISADO (LANDSCAPE) */
+ 
   @page {
-    size: A6 landscape; /* Configura el tamaño a A6 y orientación APISADA */
-    margin: 0; /* Elimina los márgenes por defecto de la página */
+    size: A6 landscape; 
+    margin: 0; 
   }
 
   body {
-    font-family: 'Trebuchet MS', 'Arial', sans-serif; /* ¡FUENTE CAMBIADA! Trebuchet MS, con Arial como respaldo */
+    font-family: 'Trebuchet MS', 'Arial', sans-serif; 
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Alinea los elementos al principio del eje Y */
-    min-height: 100vh; /* Asegura que ocupe al menos la altura de la vista */
-    overflow: hidden; /* Evita barras de desplazamiento si el contenido se ajusta */
+    align-items: flex-start; 
+    min-height: 100vh; 
+    overflow: hidden; 
   }
 
   .contenedor-etiqueta {
-    /* MANTIENE TUS DIMENSIONES SOLICITADAS para A6 LANDSCAPE */
-    width: 148mm; /* Ancho A6 en landscape */
-    height: 105mm; /* Alto A6 en landscape */
-    box-sizing: border-box; /* Incluye padding y border en el ancho/alto */
-    padding: 5mm; /* Reduce el padding general para dar espacio a los bordes internos */
+   
+    width: 148mm; 
+    height: 105mm; 
+    box-sizing: border-box; 
+    padding: 5mm; 
     display: flex;
-    flex-direction: column; /* Sigue siendo una columna, los elementos se apilan verticalmente */
-    align-items: center; /* Centra horizontalmente los elementos hijos */
-    border: 1px solid black; /* Añadimos el borde principal que encierra todo */
+    flex-direction: column; 
+    align-items: center; 
+    border: 1px solid black; 
   }
 
   .logo-empresa {
@@ -42,13 +42,11 @@
     padding-bottom: 2mm; /* Espacio antes de la línea */
   }
 
-  /* ¡BORDE ELIMINADO de section-box! */
   .section-box {
-    /* border: 1px solid black; */ /* ESTA LÍNEA FUE ELIMINADA/COMENTADA */
     width: calc(100% - 2mm); /* Ocupa casi todo el ancho con un pequeño margen interno */
     margin-bottom: 5mm; /* Espacio entre secciones */
     padding: 3mm; /* Padding dentro de cada caja */
-    box-sizing: border-box;
+   /* box-sizing: border-box;*/
     text-align: center; /* Centrar contenido dentro de la caja */
   }
 
@@ -65,7 +63,7 @@
   }
 
   .barcode-text {
-    font-size: 1.1em;
+   /* font-size: 1.1em;*/
     font-weight: bold;
     word-break: break-all;
     padding-bottom: 2mm;
@@ -85,11 +83,11 @@
   }
 
   .data-table th {
-    background-color: #f0f0f0;
+    background-color: #858585;
     font-weight: bold;
   }
 
-  /* Oculta todo lo que no sea la etiqueta cuando se imprime */
+
   @media print {
     body {
       margin: 0;
@@ -99,7 +97,7 @@
       box-shadow: none;
       border: 1px solid black;
     }
-    /* ¡BORDE ELIMINADO de section-box en impresión también! */
+    
     .section-box {
       border: none; /* Asegura que no haya borde en la impresión */
     }
@@ -172,3 +170,4 @@
 </script>
 </body>
 </html>
+
