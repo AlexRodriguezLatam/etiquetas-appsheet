@@ -144,6 +144,8 @@
     const skid = urlParams.get('skid') || 'N/A';
     const referencia = urlParams.get('ref') || 'N/A';
     const empresa = urlParams.get('empresa') || 'TOLEDO'; 
+   
+   document.title = `SKID: ${skid} - SKU: ${sku}`;
 
     document.getElementById('empresa-nombre').innerText = empresa;
     document.getElementById('barcode-value-text').innerText = sku;
@@ -170,5 +172,6 @@
 </script>
 </body>
 </html>
+
 
 
